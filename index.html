@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>خطة تقليل الجرعات - 14 يوم</title>
+  <style>
+    body { font-family: sans-serif; background: #f7f9fa; color: #222; padding: 10px; }
+    h1 { text-align: center; color: #004080; margin-bottom: 20px; }
+    .template-block { background: white; border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .template-block h2 { font-size: 18px; color: #006699; margin-bottom: 10px; }
+    .dose-group { margin-bottom: 10px; }
+    label { margin-left: 10px; }
+    input[type=number] { width: 50px; padding: 5px; margin: 0 5px; }
+    .alert { color: red; font-size: 14px; margin-top: 5px; }
+    .summary { margin-top: 5px; font-size: 15px; font-weight: bold; }
+    canvas { background: white; border-radius: 12px; margin-top: 30px; padding: 10px; width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>خطة تقليل الجرعات لمدة 14 يوم</h1>
+  <div id="templates"></div>
+  <canvas id="chart" height="300"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const days = ['27 / 07', '28 / 07', '29 / 07', '30 / 07', '31 / 07', '01 / 08', '02 / 08', '03 / 08', '04 / 08', '05 / 08', '06 / 08', '07 / 08', '08 / 08', '09 / 08'];
+    const plan = [[2.0, 6.0, 5.0, 6.0], [1.5, 4.5, 3.0, 6.0], [1.5, 4.0, 3.0, 6.0], [1.30, 5.0, 3.00, 6.0], [1.30, 3.5, 2.5, 6.0], [1.0, 4.00, 2.5, 6.0], [1.0, 3.5, 2.0, 6.0], [0.5, 3.00, 2.0, 6.0], [0.5, 2.5, 2.0, 6.0], [.05, 2.0, 1.5, 6.0] , [0.5, 1.5, 1.5, 6.0], [0.0, 1.0, 1.0, 6.0], [0.0, 0.5, 1.0, 6.0], [0.0, 0.0, 5.0, 6.0]];
+    const meds = ["برافاماكس", "أرموويك", "نايت كالم", "جابتين"];
+
+    const container = document.getElementById("templates");
+
+    days.forEach((day, dayIndex) => {
+      const block = document.createElement("div");
+      block.className = "template-block";
+      block.innerHTML = `<h2>${day}</h2>`;
+
+      meds.forEach((med, medIndex) => {
+        const max = plan[dayIndex][medIndex];
+        const group = document.createElement("div");
+        group.className = "dose-group";
+
+        group.innerHTML = `
+          <label>${med} (الحد: ${max})</label>
+          صباحًا: <input type="number" min="0" step="0.5">
+          مساءً: <input type="number" min="0" step="0.5">
+          ليلًا: <input type="number" min="0" step="0.5">
+          <div class="summary">تم: 0 / ${max}</div>
+          <div class="alert"></div>
+        `;
+
+        const inputs = group.querySelectorAll("input");
+        const summary = group.querySelector(".summary");
+        const alertBox = group.querySelector(".alert");
+
+        inputs.forEach((input, inputIndex) => {
+  const key = `day${dayIndex}-med${medIndex}-input${inputIndex}`;
+  // تحميل القيمة من localStorage إن وُجدت
+  const saved = localStorage.getItem(key);
+  if (saved !== null) input.value = saved;
+
+  input.addEventListener("input", () => {
+    localStorage.setItem(key, input.value); // حفظ القيمة
+    let total = 0;
+    inputs.forEach(i => total += parseFloat(i.value) || 0);
+    summary.textContent = `تم: ${total} / ${max}`;
+    alertBox.textContent = total > max ? "⚠️ تجاوزت الجرعة المسموحة!" : "";
+  });
+
+  // تحديث الملخص عند التحميل الأول
+  input.dispatchEvent(new Event('input'));
+      });
+
+        block.appendChild(group);
+      });
+
+      container.appendChild(block);
+    });
+
+    const ctx = document.getElementById('chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [
+          { label: 'برافاماكس', data: [2.0, 1.78, 1.56, 1.33, 1.11, 0.89, 0.67, 0.44, 0.22, 0.0], borderWidth: 2 },
+          { label: 'أرموويك', data: [6.0, 5.33, 4.67, 4.0, 3.33, 2.67, 2.0, 1.33, 0.67, 0.0], borderWidth: 2 },
+          { label: 'نايت كالم', data: [6.0, 5.33, 4.67, 4.0, 3.33, 2.67, 2.0, 1.33, 0.67, 0.0], borderWidth: 2 }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } },
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  </script>
+</body>
+</html>
