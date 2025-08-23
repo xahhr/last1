@@ -1,100 +1,119 @@
-
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>خطة تقليل الجرعات - 14 يوم</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>21-Day Taper Plan</title>
   <style>
-    body { font-family: sans-serif; background: #f7f9fa; color: #222; padding: 10px; }
-    h1 { text-align: center; color: #004080; margin-bottom: 20px; }
-    .template-block { background: white; border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .template-block h2 { font-size: 18px; color: #006699; margin-bottom: 10px; }
-    .dose-group { margin-bottom: 10px; }
-    label { margin-left: 10px; }
-    input[type=number] { width: 50px; padding: 5px; margin: 0 5px; }
-    .alert { color: red; font-size: 14px; margin-top: 5px; }
-    .summary { margin-top: 5px; font-size: 15px; font-weight: bold; }
-    canvas { background: white; border-radius: 12px; margin-top: 30px; padding: 10px; width: 100%; }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      margin: 20px;
+      background: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
+    }
+    .day {
+      background: #fff;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #eee;
+    }
+    input[type=number] {
+      width: 60px;
+      font-size: 16px;
+    }
+    .alert {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h1>خطة تقليل الجرعات لمدة 14 يوم</h1>
-  <div id="templates"></div>
-  <canvas id="chart" height="300"></canvas>
+  <h1>21-Day Taper Plan</h1>
+  <div id="plan"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const days = ['27 / 07', '28 / 07', '29 / 07', '30 / 07', '31 / 07', '01 / 08', '02 / 08', '03 / 08', '04 / 08', '05 / 08', '06 / 08', '07 / 08', '08 / 08', '09 / 08'];
-    const plan = [[2.0, 6.0, 5.0, 6.0], [1.5, 4.5, 3.0, 6.0], [1.5, 4.0, 3.0, 6.0], [1.30, 5.0, 3.00, 6.0], [1.30, 3.5, 2.5, 6.0], [1.0, 4.00, 2.5, 6.0], [1.0, 3.5, 2.0, 6.0], [0.5, 3.00, 2.0, 6.0], [0.5, 2.5, 2.0, 6.0], [.05, 2.0, 1.5, 6.0] , [0.5, 1.5, 1.5, 6.0], [0.0, 1.0, 1.0, 6.0], [0.0, 0.5, 1.0, 6.0], [0.0, 0.0, 5.0, 6.0]];
-    const meds = ["برافاماكس", "أرموويك", "نايت كالم", "جابتين"];
+    const drugs = [
+      { name: "Bravamax", maxDaily: 400 },
+      { name: "Armowic", maxDaily: 300 },
+      { name: "Night Calm", maxDaily: 15 },
+      { name: "Gabapentin", maxDaily: 2400 }
+    ];
 
-    const container = document.getElementById("templates");
+    const days = 21;
 
-    days.forEach((day, dayIndex) => {
-      const block = document.createElement("div");
-      block.className = "template-block";
-      block.innerHTML = `<h2>${day}</h2>`;
+    function getSavedData(day, drug, time) {
+      return localStorage.getItem(`day${day}_${drug}_${time}`) || "";
+    }
 
-      meds.forEach((med, medIndex) => {
-        const max = plan[dayIndex][medIndex];
-        const group = document.createElement("div");
-        group.className = "dose-group";
+    function saveData(day, drug, time, value) {
+      localStorage.setItem(`day${day}_${drug}_${time}`, value);
+      checkLimits(day, drug);
+    }
 
-        group.innerHTML = `
-          <label>${med} (الحد: ${max})</label>
-          صباحًا: <input type="number" min="0" step="0.5">
-          مساءً: <input type="number" min="0" step="0.5">
-          ليلًا: <input type="number" min="0" step="0.5">
-          <div class="summary">تم: 0 / ${max}</div>
-          <div class="alert"></div>
-        `;
-
-        const inputs = group.querySelectorAll("input");
-        const summary = group.querySelector(".summary");
-        const alertBox = group.querySelector(".alert");
-
-        inputs.forEach((input, inputIndex) => {
-  const key = `day${dayIndex}-med${medIndex}-input${inputIndex}`;
-  // تحميل القيمة من localStorage إن وُجدت
-  const saved = localStorage.getItem(key);
-  if (saved !== null) input.value = saved;
-
-  input.addEventListener("input", () => {
-    localStorage.setItem(key, input.value); // حفظ القيمة
-    let total = 0;
-    inputs.forEach(i => total += parseFloat(i.value) || 0);
-    summary.textContent = `تم: ${total} / ${max}`;
-    alertBox.textContent = total > max ? "⚠️ تجاوزت الجرعة المسموحة!" : "";
-  });
-
-  // تحديث الملخص عند التحميل الأول
-  input.dispatchEvent(new Event('input'));
+    function checkLimits(day, drug) {
+      let total = 0;
+      ["Morning","Evening","Night"].forEach(time => {
+        const val = parseFloat(document.getElementById(`d${day}_${drug}_${time}`).value) || 0;
+        total += val;
       });
-
-        block.appendChild(group);
-      });
-
-      container.appendChild(block);
-    });
-
-    const ctx = document.getElementById('chart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: days,
-        datasets: [
-          { label: 'برافاماكس', data: [2.0, 1.78, 1.56, 1.33, 1.11, 0.89, 0.67, 0.44, 0.22, 0.0], borderWidth: 2 },
-          { label: 'أرموويك', data: [6.0, 5.33, 4.67, 4.0, 3.33, 2.67, 2.0, 1.33, 0.67, 0.0], borderWidth: 2 },
-          { label: 'نايت كالم', data: [6.0, 5.33, 4.67, 4.0, 3.33, 2.67, 2.0, 1.33, 0.67, 0.0], borderWidth: 2 }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } },
-        plugins: { legend: { position: 'bottom' } }
+      const max = drugs.find(d => d.name === drug).maxDaily;
+      const alertBox = document.getElementById(`alert_${day}_${drug}`);
+      if (total > max) {
+        alertBox.textContent = `⚠ Over daily limit (${max} mg)!`;
+      } else {
+        alertBox.textContent = "";
       }
-    });
+    }
+
+    const planDiv = document.getElementById("plan");
+    for (let day = 1; day <= days; day++) {
+      const dayDiv = document.createElement("div");
+      dayDiv.className = "day";
+      dayDiv.innerHTML = `<h2>Day ${day}</h2>`;
+
+      const table = document.createElement("table");
+      table.innerHTML = `
+        <tr>
+          <th>Drug</th>
+          <th>Morning</th>
+          <th>Evening</th>
+          <th>Night</th>
+          <th>Status</th>
+        </tr>
+      `;
+
+      drugs.forEach(drug => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${drug.name}</td>
+          <td><input type="number" id="d${day}_${drug.name}_Morning" value="${getSavedData(day, drug.name, "Morning")}" oninput="saveData(${day}, '${drug.name}', 'Morning', this.value)" /></td>
+          <td><input type="number" id="d${day}_${drug.name}_Evening" value="${getSavedData(day, drug.name, "Evening")}" oninput="saveData(${day}, '${drug.name}', 'Evening', this.value)" /></td>
+          <td><input type="number" id="d${day}_${drug.name}_Night" value="${getSavedData(day, drug.name, "Night")}" oninput="saveData(${day}, '${drug.name}', 'Night', this.value)" /></td>
+          <td><span id="alert_${day}_${drug.name}" class="alert"></span></td>
+        `;
+        table.appendChild(row);
+      });
+
+      dayDiv.appendChild(table);
+      planDiv.appendChild(dayDiv);
+    }
   </script>
 </body>
 </html>
