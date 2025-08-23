@@ -39,8 +39,13 @@
       font-size: 16px;
     }
     .alert {
-      color: red;
       font-weight: bold;
+    }
+    .ok {
+      color: green;
+    }
+    .warn {
+      color: red;
     }
     .max-info {
       font-size: 14px;
@@ -81,8 +86,10 @@
       const alertBox = document.getElementById(`alert_${day}_${drug}`);
       if (total > max) {
         alertBox.textContent = `⚠ Total = ${total} mg (Over limit ${max} mg!)`;
+        alertBox.className = "alert warn";
       } else {
         alertBox.textContent = `✔ Total = ${total} mg / Max ${max} mg`;
+        alertBox.className = "alert ok";
       }
     }
 
@@ -107,4 +114,24 @@
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${drug.name}<br><span class="max-info">Max: ${drug.maxDaily} mg</span></td>
-          <td><input type="number" id="d${day
+          <td><input type="number" id="d${day}_${drug.name}_Morning" value="${getSavedData(day, drug.name, "Morning")}" oninput="saveData(${day}, '${drug.name}', 'Morning', this.value)" /></td>
+          <td><input type="number" id="d${day}_${drug.name}_Evening" value="${getSavedData(day, drug.name, "Evening")}" oninput="saveData(${day}, '${drug.name}', 'Evening', this.value)" /></td>
+          <td><input type="number" id="d${day}_${drug.name}_Night" value="${getSavedData(day, drug.name, "Night")}" oninput="saveData(${day}, '${drug.name}', 'Night', this.value)" /></td>
+          <td><span id="alert_${day}_${drug.name}" class="alert"></span></td>
+        `;
+        table.appendChild(row);
+      });
+
+      dayDiv.appendChild(table);
+      planDiv.appendChild(dayDiv);
+    }
+
+    // Initial check when page loads
+    window.onload = () => {
+      for (let day = 1; day <= days; day++) {
+        drugs.forEach(drug => checkLimits(day, drug.name));
+      }
+    };
+  </script>
+</body>
+</html>
