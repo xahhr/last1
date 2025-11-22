@@ -1,113 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>Taper Plan Tracker</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#f5f5f5; margin:20px; }
-    h1 { text-align:center; }
-    table { width:100%; border-collapse: collapse; margin-top:20px; background:#fff; }
-    th, td { border:1px solid #ccc; padding:10px; text-align:center; }
-    th { background:#eee; }
-    input { width:60px; text-align:center; }
-    .warning { color:red; font-weight:bold; }
-    .stock { font-size:0.9em; color:#333; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تعافي 84 — خطتي للصفر الكامل</title>
+<link rel="manifest" href="data:application/manifest+json,{
+  \"name\": \"تعافي 84\",
+  \"short_name\": \"تعافي84\",
+  \"start_url\": \".\",
+  \"display\": \"standalone\",
+  \"background_color\": \"#0b1220\",
+  \"theme_color\": \"#4ade80\",
+  \"icons\": [{\"src\": \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='80'%3E💊%3C/text%3E%3C/svg%3E\", \"sizes\": \"any\"}]
+}">
+
+<style>
+  :root{
+    --bg:#0b1220; --card:#10192e; --text:#e9eef7; --muted:#99a3b3;
+    --green:#4ade80; --blue:#60a5fa; --yellow:#fbbf24; --red:#fb7185; --purple:#c084fc;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Arial;color:var(--text);background:var(--bg);line-height:1.5}
+  header{background:#0b1220ee;backdrop-filter:blur(12px);padding:16px;text-align:center;position:sticky;top:0;z-index:100;border-bottom:1px solid #1f2a44}
+  h1{font-size:22px;background:linear-gradient(90deg,#4ade80,#60a5fa); -webkit-background-clip:text; -webkit-text-fill-color:transparent}
+  .day{color:var(--green);font-size:18px;font-weight:bold}
+  .wrap{max-width:1100px;margin:16px auto;padding:0 12px}
+  .card{background:var(--card);border-radius:16px;padding:18px;margin-bottom:16px;border:1px solid #1f2a44;box-shadow:0 4px 15px #0004}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+  .full{grid-column:1/-1}
+  .half{grid-column:span 12}@media(min-width:768px){.half{grid-column:span 6}}
+  .tag{padding:4px 10px;border-radius:8px;font-size:13px;font-weight:bold}
+  .green-bg{background:#12311e;color:#a7f3d0}
+  .blue-bg{background:#1e2a44;color:#93c5fd}
+  .yellow-bg{background:#32240d;color:#fde68a}
+  .red-bg{background:#3a1521;color:#fda4af}
+  .purple-bg{background:#2e1065;color:#e9d5ff}
+  table{width:100%;border-collapse:collapse;margin:12px 0}
+  th{background:var(--card);border-radius:12px;overflow:hidden}
+  th{background:var(--green);color:#000;padding:12px;text-align:center}
+  td{padding:10px;text-align:center;border-bottom:1px solid #1f2a44}
+  tr:last-child td{border:none}
+  .dose{font-size:18px;font-weight:bold;color:var(--green)}
+  .supp{font-size:15px;color:var(--blue)}
+  .footer{text-align:center;padding:20px;color:var(--muted);font-size:14px}
+</style>
 </head>
+
 <body>
-  <h1>6-Week Withdrawal Plan</h1>
+<header>
+  <h1>تعافي 84 💊</h1>
+  <div class="day">الخميس ٢٠ نوفمبر ٢٠٢٥ — اليوم الأول</div>
+</header>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Drug</th>
-        <th>Max Daily Dose</th>
-        <th>Today's Dose</th>
-        <th>Remaining Stock</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="drugTable">
-      <!-- rows will be inserted by JS -->
-    </tbody>
-  </table>
+<div class="wrap">
 
-  <script>
-    // Initial stock (example values — adjust based on actual boxes you have)
-    let drugs = [
-      { name: "Night Calm (mg)", max: 12, stock: 60 },
-      { name: "Armodafinil (mg)", max: 150, stock: 30 },
-      { name: "Gabapentin (mg)", max: 2400, stock: 90 },
-      { name: "Caffeine/Sugar (unit)", max: 2, stock: 60 }
-    ];
+  <!-- جرعات اليوم -->
+  <div class="card full">
+    <h2 style="color:var(--green)">🅰️ جرعات اليوم (الخفض الأول)</h2><br>
+    <table>
+      <tr><th>الدواء</th><th>الجرعة اليوم</th><th>التوزيع</th></tr>
+      <tr><td>إيزوبيكلون</td><td class="dose">١٣.٥ مجم</td><td>٤.٥ صباحًا ┊ ٤.٥ مساءً ┊ ٤.٥ ليلًا</td></tr>
+      <tr><td>جابابنتين</td><td class="dose">٢١٦٠ مجم</td><td>٨٠٠ + ٦٨٠ + ٦٨٠</td></tr>
+      <tr><td>أرمودافينيل</td><td class="dose">٢٥٠ مجم</td><td>١٥٠ صباحًا + ١٠٠ ظهرًا</td></tr>
+      <tr><td>مونستر</td><td class="dose">نص كان فقط</td><td>مع الغداء</td></tr>
+    </table>
+  </div>
 
-    function renderTable() {
-      let tbody = document.getElementById("drugTable");
-      tbody.innerHTML = "";
-      drugs.forEach((drug, i) => {
-        let row = document.createElement("tr");
+  <!-- المكملات الغذائية -->
+  <div class="card full">
+    <h2 style="color:var(--blue)">💊 المكملات الغذائية اليومية (ثابتة طوال ٨٤ يوم)</h2><br>
+    <table>
+      <tr><th>المكمل</th><th>الجرعة</th><th>الوقت</th><th>الفايدة</th></tr>
+      <tr><td class="supp">تيروسين</td><td>١٠٠٠ مجم</td><td>صباحًا بعد الأكل</td><td>دوبامين طبيعي</td></tr>
+      <tr><td class="supp">ب-كومبلكس</td><td>قرص واحد</td><td>صباحًا</td><td>طاقة + أعصاب</td></tr>
+      <tr><td class="supp">ماغنيسيوم جليسينات</td><td>٤٠٠ مجم</td><td>ظهرًا</td><td>قلق ورعشة</td></tr>
+      <tr><td class="supp">ماغنيسيوم جليسينات</td><td>٤٠٠ مجم</td><td>مساءً</td><td>استرخاء عضلي</td></tr>
+      <tr><td class="supp">تريبتوفان</td><td>١٠٠٠ مجم</td><td>قبل النوم بساعة</td><td>سيروتونين + نوم</td></tr>
+      <tr><td class="supp">ميلاتونين</td><td>٣ مجم</td><td>قبل النوم ٣٠ دقيقة</td><td>تنظيم دورة النوم</td></tr>
+      <tr><td class="supp">كويتابكس (احتياطي)</td><td>25 مجم فقط</td><td>ليلًا إذا أرق شديد</td><td>مهدئ قوي</td></tr>
+    </table>
+  </div>
 
-        // drug name
-        let nameTd = document.createElement("td");
-        nameTd.textContent = drug.name;
-        row.appendChild(nameTd);
+  <!-- جدول الخطة الكاملة 12 أسبوع -->
+  <div class="card full">
+    <h2 style="color:var(--purple)">📅 الخطة الكاملة حتى الصفر (٨٤ يوم)</h2><br>
+    <table>
+      <tr><th>الأسبوع</th><th>التاريخ</th><th>إيزو</th><th>جابا</th><th>أرمو</th><th>مونستر</th></tr>
+      <tr><td>1</td><td>20–26 نوف</td><td>15→13.5</td><td>2400→2160</td><td>300→250</td><td>1→0.5</td></tr>
+      <tr><td>2</td><td>27 نوف–3 ديسم</td><td>13.5→12.2</td><td>2160→1940</td><td>250→210</td><td>0.5→0</td></tr>
+      <tr><td>3</td><td>4–10 ديسم</td><td>12.2→11</td><td>1940→1750</td><td>210→175</td><td>صفر</td></tr>
+      <tr><td>4</td><td>11–17 ديسم</td><td>11→9.9</td><td>1750→1575</td><td>175→140</td><td>صفر</td></tr>
+      <tr><td>5</td><td>18–24 ديسم</td><td>9.9→8.9</td><td>1575→1400</td><td>140→110</td><td>صفر</td></tr>
+      <tr><td>6</td><td>25–31 ديسم</td><td>8.9→8</td><td>1400→1250</td><td>110→80</td><td>صفر</td></tr>
+      <tr><td>7</td><td>1–7 يناير</td><td>8→7.1</td><td>1250→1100</td><td>80→50</td><td>صفر</td></tr>
+      <tr><td>8</td><td>8–14 يناير</td><td>7.1→6.2</td><td>1100→950</td><td>50→25</td><td>صفر</td></tr>
+      <tr><td>9</td><td>15–21 يناير</td><td>6.2→5.3</td><td>950→800</td><td>25→0</td><td>صفر</td></tr>
+      <tr><td>10</td><td>22–28 يناير</td><td>5.3→4.2</td><td>800→600</td><td>صفر</td><td>صفر</td></tr>
+      <tr><td>11</td><td>29 يناير–4 فبراير</td><td>4.2→2.8</td><td>600→400</td><td>صفر</td><td>صفر</td></tr>
+      <tr><td>12</td><td>5–11 فبراير 2026</td><td>2.8→0</td><td>400→0</td><td>صفر</td><td>صفر</td></tr>
+    </table>
+    <p style="text-align:center;margin-top:12px;color:var(--green);font-size:18px;font-weight:bold">
+      الصفر الكامل: الثلاثاء ١١ فبراير ٢٠٢٦ 🎉
+    </p>
+  </div>
 
-        // max daily
-        let maxTd = document.createElement("td");
-        maxTd.textContent = drug.max;
-        row.appendChild(maxTd);
+  <!-- مهام اليوم + نصيحة -->
+  <div class="grid">
+    <div class="card half">
+      <h3 style="color:var(--yellow)">✅ مهام اليوم</h3>
+      <ol style="padding-right:20px;font-size:15px">
+        <li>سجل الجرعات في TaperMate</li>
+        <li>وزن نفسك صباحًا</li>
+        <li>مشي ١٥–٢٠ دقيقة</li>
+        <li>صلاة كاملة + شكر الله</li>
+        <li>ميزانية اليوم: ٤٠٠ جنيه فقط</li>
+      </ol>
+    </div>
 
-        // input dose
-        let doseTd = document.createElement("td");
-        let input = document.createElement("input");
-        input.type = "number";
-        input.min = 0;
-        input.max = drug.max * 2; // allow some error margin
-        input.dataset.index = i;
-        input.addEventListener("input", updateDose);
-        doseTd.appendChild(input);
-        row.appendChild(doseTd);
+    <div class="card half">
+      <h3 style="color:var(--purple)">💡 نصيحة اليوم</h3>
+      <p style="font-size:16px;line-height:1.8">
+        "كل مرة تختار فيها الجرعة الأقل، تكون قد اخترت الحرية على العبودية.  
+        اليوم أنت أقوى من الأمس — استمر."
+      </p>
+    </div>
+  </div>
 
-        // remaining stock
-        let stockTd = document.createElement("td");
-        stockTd.className = "stock";
-        stockTd.id = "stock-" + i;
-        stockTd.textContent = drug.stock;
-        row.appendChild(stockTd);
-
-        // status
-        let statusTd = document.createElement("td");
-        statusTd.id = "status-" + i;
-        row.appendChild(statusTd);
-
-        tbody.appendChild(row);
-      });
-    }
-
-    function updateDose(e) {
-      let index = e.target.dataset.index;
-      let val = parseInt(e.target.value) || 0;
-      let drug = drugs[index];
-      let status = document.getElementById("status-" + index);
-      let stockTd = document.getElementById("stock-" + index);
-
-      // check warning
-      if (val > drug.max) {
-        status.textContent = "⚠ Overdose!";
-        status.className = "warning";
-      } else {
-        status.textContent = "✔ OK";
-        status.className = "";
-      }
-
-      // update stock (assumes each unit entered = 1 pill/mg unit consumed)
-      let used = val;
-      let remaining = drug.stock - used;
-      if (remaining < 0) remaining = 0;
-      stockTd.textContent = remaining;
-    }
-
-    renderTable();
-  </script>
+  <div class="footer">
+    تطبيق تعافي 84 • معاك خطوة بخطوة حتى الصفر الكامل<br>
+    @xahhr2015 — نوفمبر 2025 → فبراير 2026 💪
+  </div>
+</div>
 </body>
 </html>
