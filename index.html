@@ -222,11 +222,28 @@ function setStartDate(d){d.setHours(0,0,0,0);localStorage.setItem(LS_START,d.toI
 function getDayIndex(){const st=getStartDate().getTime(),now=new Date();now.setHours(0,0,0,0);return Math.min(84,Math.max(1,Math.floor((now-st)/86400000)+1));}
 const weekOf = d => Math.ceil(d/7);
 /* ===== الجرعات ===== */
+/* ===== الجرعات ===== */
 function fillRange(a,s,e,v){for(let i=s;i<=e;i++)a[i]=v;}
-const targets={Prafamax:new Array(85).fill(0),Armodacure:new Array(85).fill(0),NightCalm:new Array(85).fill(0),Gabapentin:new Array(85).fill(0),Caffeine:new Array(85).fill(0)};
-fillRange(targets.Prafamax,1,14,400);fillRange(targets.Prafamax,15,28,200);fillRange(targets.Prafamax,29,42,100);
+const targets={
+    Armodacure:new Array(85).fill(0),
+    NightCalm:new Array(85).fill(0),
+    Gabapentin:new Array(85).fill(0),
+    Caffeine:new Array(85).fill(0)
+};
+
+// تم حذف Prafamax من هنا
+
+// تحديث Night Calm (يبدأ من 15 ويتناقص بمقدار 3 ملجم كل أسبوعين)
+fillRange(targets.NightCalm, 1, 14, 15);  // الأسبوع 1-2
+fillRange(targets.NightCalm, 15, 28, 12); // الأسبوع 3-4
+fillRange(targets.NightCalm, 29, 42, 9);  // الأسبوع 5-6
+fillRange(targets.NightCalm, 43, 56, 6);  // الأسبوع 7-8
+fillRange(targets.NightCalm, 57, 70, 3);  // الأسبوع 9-10
+fillRange(targets.NightCalm, 71, 77, 2);  // الأسبوع 11 (مرحلة نهائية)
+fillRange(targets.NightCalm, 78, 84, 1);  // الأسبوع 12 (مرحلة نهائية)
+
+// بقية الأدوية كما هي
 fillRange(targets.Armodacure,1,14,300);fillRange(targets.Armodacure,15,28,225);fillRange(targets.Armodacure,29,42,150);fillRange(targets.Armodacure,43,70,75);
-fillRange(targets.NightCalm,1,14,12);fillRange(targets.NightCalm,15,28,9);fillRange(targets.NightCalm,29,42,6);fillRange(targets.NightCalm,43,56,3);fillRange(targets.NightCalm,57,63,2);fillRange(targets.NightCalm,64,70,1);
 fillRange(targets.Gabapentin,1,14,2400);fillRange(targets.Gabapentin,15,28,1600);fillRange(targets.Gabapentin,29,42,800);for(let d=43;d<=56;d++)targets.Gabapentin[d]=(d%2)?800:0;
 fillRange(targets.Caffeine,1,14,300);fillRange(targets.Caffeine,15,28,200);fillRange(targets.Caffeine,29,42,150);fillRange(targets.Caffeine,43,56,100);fillRange(targets.Caffeine,57,84,80);
 /* ===== البيانات ===== */
@@ -242,7 +259,12 @@ function totalTabsLeft(inv,k){const p=inv[k].tabsPerBox||0,b=(inv[k].boxes||0)*p
 function daysLeft(drug, day){const inv=getInv(),tabs=totalTabsLeft(inv,drug),mgLeft=tabs*inv[drug].mgPerTab;let need=0;for(let d=day;d<=84;d++)need+=targets[drug][d]||0;return need>0?Math.floor(mgLeft/(need/(84-day+1))):999;}
 /* ===== العناصر ===== */
 const els={startDateLabel:document.getElementById("startDateLabel"),dayIdxLabel:document.getElementById("dayIdxLabel"),weekLabel:document.getElementById("weekLabel"),weekPhase:document.getElementById("weekPhase"),targetsText:document.getElementById("targetsText"),progressBar:document.getElementById("progressBar"),progressText:document.getElementById("progressText"),drugTableBody:document.querySelector("#drugTable tbody"),invTableBody:document.querySelector("#invTable tbody"),saveMsg:document.getElementById("saveMsg"),supAM:document.getElementById("supAM"),supNoon:document.getElementById("supNoon"),supPM:document.getElementById("supPM"),supBed:document.getElementById("supBed"),notes:document.getElementById("notes"),kpiEnergy:document.getElementById("kpiEnergy"),kpiSleep:document.getElementById("kpiSleep"),kpiAnxiety:document.getElementById("kpiAnxiety"),kpiGut:document.getElementById("kpiGut")};
-const DRUGS=[{key:"Prafamax",label:"Prafamax (Modafinil)"},{key:"Armodacure",label:"Armodacure (Armodafinil)"},{key:"NightCalm",label:"Night Calm (Zopiclone)"},{key:"Gabapentin",label:"Gabapentin"},{key:"Caffeine",label:"Caffeine (حد أقصى)"}];
+const DRUGS = [
+  { key: "Armodacure", label: "Armodacure (Armodafinil)" },
+  { key: "NightCalm", label: "Night Calm (Zopiclone)" },
+  { key: "Gabapentin", label: "Gabapentin" },
+  { key: "Caffeine", label: "Caffeine (حد أقصى)" }
+];
 let currentDay = getDayIndex();
 let chartInstance = null;
 /* ===== الرسم البياني ===== */
