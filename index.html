@@ -14,38 +14,85 @@
     \"src\": \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3EChart%3C/text%3E%3C/svg%3E\",
     \"sizes\": \"any\"
   }]
-}">
-<style>
-  :root { --bg:#0b1220; --card:#10192e; --muted:#99a3b3; --text:#e9eef7; --accent:#4ade80; --accent2:#60a5fa; --warn:#fbbf24; --danger:#fb7185 }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg);transition:0.3s}
-  body.night{--bg:#0a0e1a;--card:#0f1628;--text:#d0d8e6;--muted:#7a889e}
-  header{padding:16px;border-bottom:1px solid #1f2a44;position:sticky;top:0;background:#0b1220ee;backdrop-filter:blur(8px);z-index:10}
-  h1{margin:0;font-size:18px}
-  .wrap{max-width:1100px;margin:16px auto;padding:0 12px}
-  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
-  .card{grid-column:span 12;background:var(--card);border:1px solid #1f2a44;border-radius:14px;padding:14px}
+}"><style>
+  :root {
+    /* الوضع الفاتح (الافتراضي الجديد) */
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --header-bg: #ffffffee;
+    --input-bg: #f8fafc;
+    --btn-bg: #ffffff;
+    --btn-text: #0f172a;
+    --accent: #16a34a;
+    --accent-bg: #dcfce7;
+    --accent-border: #86efac;
+    --accent-text: #166534;
+    --warn-bg: #fef3c7;
+    --warn-border: #fde047;
+    --warn-text: #92400e;
+    --danger: #e11d48;
+    --danger-bg: #ffe4e6;
+    --danger-border: #fda4af;
+    --danger-text: #9f1239;
+  }
+
+  body.night {
+    /* الوضع الليلي (يتم تفعيله بالزر) */
+    --bg: #0b1220;
+    --card: #10192e;
+    --text: #e9eef7;
+    --muted: #99a3b3;
+    --border: #1f2a44;
+    --header-bg: #0b1220ee;
+    --input-bg: #0c1426;
+    --btn-bg: #0c1426;
+    --btn-text: #e6eefb;
+    --accent: #4ade80;
+    --accent-bg: #12311e;
+    --accent-border: #1f7a3e;
+    --accent-text: #d7ffe1;
+    --warn-bg: #32240d;
+    --warn-border: #9a6a10;
+    --warn-text: #fff3cd;
+    --danger: #fb7185;
+    --danger-bg: #3a1521;
+    --danger-border: #a61b42;
+    --danger-text: #ffe4ea;
+  }
+
+  * { box-sizing:border-box }
+  body { margin:0; font-family:system-ui,Segoe UI,Roboto,Arial; color:var(--text); background:var(--bg); transition:0.3s }
+  header { padding:16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--header-bg); backdrop-filter:blur(8px); z-index:10 }
+  h1 { margin:0; font-size:18px }
+  .wrap { max-width:1100px; margin:16px auto; padding:0 12px }
+  .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:12px }
+  .card { grid-column:span 12; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px }
   @media(min-width:900px){ .half{grid-column:span 6} }
-  label{display:block;font-size:12px;color:var(--muted);margin:8px 0 6px}
-  input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #263558;background:#0c1426;color:var(--text);outline:none}
-  input:focus,textarea:focus{border-color:#3b82f6}
-  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .btn{padding:9px 12px;border-radius:10px;border:1px solid #2a3b63;background:#0c1426;color:#e6eefb;cursor:pointer;font-size:13px}
-  .btn.accent{background:#12311e;border-color:#1f7a3e;color:#d7ffe1}
-  .btn.warn{background:#32240d;border-color:#9a6a10;color:#fff3cd}
-  .btn.danger{background:#3a1521;border-color:#a61b42;color:#ffe4ea}
-  .muted{color:var(--muted)} .sub{font-size:12px;color:#b9c3d7}
-  .ok{color:var(--accent)} .bad{color:var(--danger)}
-  .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:20px;border:1px solid #2a3b63;background:#0c1426;font-size:12px;cursor:pointer}
-  .pill.active{background:#12311e;border-color:#1f7a3e}
-  .bar{height:8px;background:#0c1426;border:1px solid #243352;border-radius:999px;overflow:hidden;margin:6px 0}
-  .bar>span{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#4ade80);transition:0.4s}
-  .table{width:100%;border-collapse:collapse;font-size:13px}
-  .table th,.table td{border-bottom:1px solid #223054;padding:8px 6px;text-align:center}
-  dialog{border:none;border-radius:14px;background:var(--card);color:var(--text);max-width:900px;width:92%;padding:20px}
-  dialog::backdrop{background:#0008}
+  label { display:block; font-size:12px; color:var(--muted); margin:8px 0 6px }
+  input, select, textarea { width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); outline:none }
+  input:focus, textarea:focus { border-color:#3b82f6 }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+  .btn { padding:9px 12px; border-radius:10px; border:1px solid var(--border); background:var(--btn-bg); color:var(--btn-text); cursor:pointer; font-size:13px }
+  .btn.accent { background:var(--accent-bg); border-color:var(--accent-border); color:var(--accent-text) }
+  .btn.warn { background:var(--warn-bg); border-color:var(--warn-border); color:var(--warn-text) }
+  .btn.danger { background:var(--danger-bg); border-color:var(--danger-border); color:var(--danger-text) }
+  .muted { color:var(--muted) } 
+  .sub { font-size:12px; color:var(--muted) }
+  .ok { color:var(--accent) } 
+  .bad { color:var(--danger) }
+  .pill { display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border-radius:20px; border:1px solid var(--border); background:var(--input-bg); font-size:12px; cursor:pointer }
+  .pill.active { background:var(--accent-bg); border-color:var(--accent-border) }
+  .bar { height:8px; background:var(--input-bg); border:1px solid var(--border); border-radius:999px; overflow:hidden; margin:6px 0 }
+  .bar>span { display:block; height:100%; background:linear-gradient(90deg,#60a5fa,#4ade80); transition:0.4s }
+  .table { width:100%; border-collapse:collapse; font-size:13px }
+  .table th, .table td { border-bottom:1px solid var(--border); padding:8px 6px; text-align:center }
+  dialog { border:none; border-radius:14px; background:var(--card); color:var(--text); max-width:900px; width:92%; padding:20px }
+  dialog::backdrop { background:#0008 }
   #chartCard canvas { width:100% !important; height:80px !important; }
-  .mood.active { background:#1f7a3e !important; border-color:#4ade80 !important; }
+  .mood.active { background:var(--accent-bg) !important; border-color:var(--accent-border) !important; color:var(--accent-text) !important; }
 </style>
 </head>
 <body>
