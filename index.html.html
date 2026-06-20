@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نيابة زفتى الإدارية — نظام قيد القضايا 2026</title>
+<style>
+  :root{
+    --blue:#1a6fbf; --blue-dark:#155ea3;
+    --bg:#f5f6f8; --card:#ffffff; --border:#e2e4e9; --border-soft:#edeef1;
+    --text:#1f2328; --text-soft:#5b6068; --text-faint:#8a8f98;
+    --green-bg:#EAF3DE; --green-tx:#3B6D11;
+    --blue-bg:#E6F1FB; --blue-tx:#185FA5;
+    --amber-bg:#FAEEDA; --amber-tx:#854F0B;
+    --pink-bg:#FBEAF0; --pink-tx:#993556;
+    --red-bg:#FCEBEB; --red-tx:#A32D2D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;background:var(--bg);color:var(--text);line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+  .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+  .top-bar h1{font-size:20px;font-weight:600;color:var(--text)}
+  .top-bar .subtitle{font-size:13px;color:var(--text-soft);margin-top:3px}
+  .stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px}
+  .stat.highlight{background:var(--blue-bg)}
+  .stat.highlight .val{color:var(--blue-tx)}
+  .stat.highlight .lbl{color:var(--blue-tx);opacity:.85}
+  .stat{background:var(--card);border:1px solid var(--border-soft);border-radius:10px;padding:14px 16px}
+  .stat .val{font-size:24px;font-weight:700;color:var(--text)}
+  .stat .lbl{font-size:12px;color:var(--text-soft);margin-top:3px}
+  .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+  .toolbar input,.toolbar select{padding:8px 12px;font-size:14px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);min-width:0}
+  .toolbar input{flex:1;min-width:180px}
+  .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;font-size:13px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);cursor:pointer;white-space:nowrap;font-weight:500;transition:.15s}
+  .btn:hover{background:#f0f1f3}
+  .btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .btn.primary:hover{background:var(--blue-dark)}
+  .btn.sm{padding:4px 9px;font-size:12px}
+  .btn.danger{color:var(--red-tx);border-color:#f0c4c4}
+  .card{background:var(--card);border:1px solid var(--border-soft);border-radius:12px;overflow:hidden}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#fafbfc;padding:10px 12px;text-align:right;font-weight:600;font-size:12px;color:var(--text-soft);border-bottom:1px solid var(--border-soft);white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid var(--border-soft);color:var(--text);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#fafbfc}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+  .b-hafz{background:var(--green-bg);color:var(--green-tx)}
+  .b-hafz2{background:var(--blue-bg);color:var(--blue-tx)}
+  .b-tahqiq{background:var(--amber-bg);color:var(--amber-tx)}
+  .b-ikhtisas{background:var(--pink-bg);color:var(--pink-tx)}
+  .b-ard{background:#EEEDFE;color:#3C3489}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,22,26,0.5);align-items:flex-start;justify-content:center;z-index:1000;padding:3vh 16px;overflow-y:auto}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--card);border-radius:14px;padding:22px;width:100%;max-width:600px;max-height:94vh;overflow-y:auto;margin:auto;box-shadow:0 10px 40px rgba(0,0,0,.18)}
+  .modal h3{font-size:17px;font-weight:700;margin-bottom:16px}
+  .form-row{margin-bottom:13px}
+  .form-row label{display:block;font-size:12px;color:var(--text-soft);margin-bottom:5px;font-weight:600}
+  .form-row input,.form-row select,.form-row textarea{width:100%;padding:8px 11px;font-size:13px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font-family:inherit}
+  .form-row textarea{resize:vertical;min-height:55px}
+  .modal-actions{display:flex;gap:8px;margin-top:18px;align-items:center}
+  .pages{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;color:var(--text-soft);border-top:1px solid var(--border-soft)}
+  .no-data{text-align:center;padding:36px;color:var(--text-soft);font-size:14px}
+  .day-badge{font-size:11px;background:#f0f1f3;color:var(--text-soft);padding:2px 7px;border-radius:5px}
+  .entity-tag{font-size:11px;color:var(--text-soft)}
+  .icon-link{color:var(--blue-tx);text-decoration:none;font-size:13px;display:inline-flex;align-items:center;gap:3px}
+  .icon-link.muted{color:#c4c7cc}
+  .section-title{font-size:16px;font-weight:700;margin:30px 0 12px;display:flex;align-items:center;gap:7px}
+  .req-row{display:grid;grid-template-columns:1.3fr 1.1fr 1fr 0.9fr auto;gap:6px;align-items:center;margin-bottom:7px;background:#fafbfc;padding:7px 9px;border-radius:8px}
+  .req-row input,.req-row select{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text)}
+  .req-row .rm{cursor:pointer;color:var(--red-tx);font-size:18px;text-align:center;user-select:none}
+  .agenda-card{border:1px solid var(--border-soft);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:var(--card)}
+  .agenda-card.urgent{border-color:#f0a8a8;background:#fffaf9}
+  .agenda-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:9px}
+  .agenda-head .id{font-weight:700;font-size:14px}
+  .agenda-head .date{font-size:12px;color:var(--blue-tx);background:var(--blue-bg);padding:4px 11px;border-radius:20px;white-space:nowrap;font-weight:600}
+  .agenda-card.urgent .date{background:var(--red-bg);color:var(--red-tx)}
+  .agenda-subj{font-size:13px;color:var(--text-soft);margin-bottom:10px}
+  .req-list-view{display:flex;flex-direction:column;gap:5px}
+  .req-item-view{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:6px 10px;background:#fafbfc;border-radius:7px}
+  .att-state{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700}
+  .att-yes{background:var(--green-bg);color:var(--green-tx)}
+  .att-no{background:var(--red-bg);color:var(--red-tx)}
+  .att-pending{background:var(--amber-bg);color:var(--amber-tx)}
+  .req-form-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .req-form-label span{font-size:13px;font-weight:700}
+  .col-id{width:55px} .col-entity{width:150px} .col-date{width:90px}
+  .col-disp{width:110px} .col-days{width:75px} .col-memo{width:90px} .col-act{width:50px}
+  .req-col-headers{display:grid;grid-template-columns:1.3fr 1.1fr 1fr 0.9fr auto;gap:6px;font-size:10px;color:var(--text-faint);padding:0 9px;margin-bottom:4px}
+  .empty-req{font-size:12px;color:var(--text-faint);margin-bottom:8px}
+  @media (max-width:700px){
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    .req-row{grid-template-columns:1fr}
+    .req-col-headers{display:none}
+  }
+  @media (min-width:701px) and (max-width:980px){
+    .stats-grid{grid-template-columns:repeat(3,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top-bar">
+    <div>
+      <h1>📋 نيابة زفتى الإدارية — قيد القضايا 2026</h1>
+      <div class="subtitle" id="case-count-sub">جاري التحميل...</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="exportJson()">⬇ نسخة احتياطية</button>
+      <button class="btn primary" onclick="openAdd()">＋ قضية جديدة</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat"><div class="val" id="s-total">—</div><div class="lbl">إجمالي القضايا</div></div>
+    <div class="stat"><div class="val" id="s-pending">—</div><div class="lbl">قيد التحقيق</div></div>
+    <div class="stat"><div class="val" id="s-ard">—</div><div class="lbl">عرض (جاري كتابة المذكرة)</div></div>
+    <div class="stat"><div class="val" id="s-done">—</div><div class="lbl">تم التصرف</div></div>
+    <div class="stat highlight"><div class="val" id="s-rate">—</div><div class="lbl">نسبة الإنجاز</div></div>
+    <div class="stat"><div class="val" id="s-days">—</div><div class="lbl">متوسط مدة التحقيق (يوم)</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="بحث في رقم القضية أو الموضوع..." oninput="render()">
+    <select id="flt-entity" onchange="render()"><option value="">كل الجهات</option></select>
+    <select id="flt-disp" onchange="render()">
+      <option value="">كل التصرفات</option>
+      <option value="تحقيق">قيد التحقيق</option>
+      <option value="عرض">عرض</option>
+      <option value="حفظ إداري">حفظ إداري</option>
+      <option value="حفظ لعدم الأهمية">حفظ لعدم الأهمية</option>
+      <option value="اختصاص">اختصاص</option>
+    </select>
+    <select id="sort" onchange="render()">
+      <option value="id-asc">رقم ↑</option>
+      <option value="id-desc">رقم ↓</option>
+      <option value="date-desc">تاريخ الإحالة ↓</option>
+      <option value="date-asc">تاريخ الإحالة ↑</option>
+      <option value="days-desc">مدة التحقيق ↓</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <colgroup>
+          <col class="col-id"><col><col class="col-entity">
+          <col class="col-date"><col class="col-disp"><col class="col-days"><col class="col-memo"><col class="col-act">
+        </colgroup>
+        <thead>
+        <tr>
+          <th>رقم</th><th>الموضوع</th><th>الجهة</th>
+          <th>الإحالة</th><th>التصرف</th><th>المدة</th><th>المذكرة</th><th></th>
+        </tr>
+        </thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
+    <div class="pages" id="pages"></div>
+  </div>
+
+  <div class="section-title">📅 الجلسات القادمة</div>
+  <div id="agenda-cont"></div>
+
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">إضافة قضية</h3>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-row">
+        <label>رقم القضية *</label>
+        <input type="number" id="f-id" placeholder="مثال: 301">
+      </div>
+      <div class="form-row">
+        <label>الجهة الإدارية</label>
+        <input type="text" id="f-entity" list="entity-list" placeholder="اختر أو اكتب جهة">
+        <datalist id="entity-list">
+          <option value="وزارة التنمية المحلية">
+          <option value="وزارة التربية والتعليم والتعليم الفني">
+          <option value="وزارة التعليم العالي والبحث العلمي">
+          <option value="وزارة الصحة والسكان">
+          <option value="وزارة التضامن الاجتماعي">
+          <option value="وزارة الإسكان والمرافق والمجتمعات العمرانية">
+          <option value="وزارة العمل">
+          <option value="وزارة الأوقاف">
+          <option value="وزارة الثقافة">
+          <option value="وزارة الشباب والرياضة">
+          <option value="وزارة البيئة">
+          <option value="وزارة التموين والتجارة الداخلية">
+          <option value="وزارة المالية">
+          <option value="وزارة الزراعة واستصلاح الأراضي">
+          <option value="وزارة الموارد المائية والري">
+          <option value="وزارة الكهرباء والطاقة المتجددة">
+          <option value="وزارة الاتصالات وتكنولوجيا المعلومات">
+          <option value="الأزهر">
+          <option value="جامعة الأزهر">
+          <option value="الضرائب العقارية">
+          <option value="داخلي">
+        </datalist>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>موضوع القضية</label>
+      <textarea id="f-subject" rows="2"></textarea>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-row">
+        <label>تاريخ الإحالة</label>
+        <input type="date" id="f-ref-date">
+      </div>
+      <div class="form-row">
+        <label>التصرف</label>
+        <select id="f-disp">
+          <option value="تحقيق">تحقيق</option>
+          <option value="عرض">عرض (انتهى التحقيق - جاري كتابة المذكرة)</option>
+          <option value="حفظ إداري">حفظ إداري</option>
+          <option value="حفظ لعدم الأهمية">حفظ لعدم الأهمية</option>
+          <option value="اختصاص">اختصاص</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>تاريخ التصرف</label>
+        <input type="date" id="f-disp-date">
+      </div>
+      <div class="form-row">
+        <label>ميعاد الجلسة القادمة</label>
+        <input type="date" id="f-session-date">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>رابط مذكرة التصرف (ملف وورد)</label>
+      <input type="url" id="f-memo-doc" placeholder="رابط Google Drive أو غيره">
+    </div>
+    <div class="form-row">
+      <label>رابط آخر متعلق بالمذكرة (اختياري)</label>
+      <input type="url" id="f-memo" placeholder="https://...">
+    </div>
+
+    <div style="border-top:1px solid var(--border-soft);margin-top:6px;padding-top:14px">
+      <div class="req-form-label">
+        <span>👤 المطلوبون</span>
+        <button class="btn sm" onclick="addRequiree()" type="button">＋ إضافة مطلوب</button>
+      </div>
+      <div class="req-col-headers">
+        <span>الاسم</span><span>الصفة / الوظيفة</span><span>الهاتف</span><span>الحضور</span><span></span>
+      </div>
+      <div id="req-form-list"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn primary" onclick="saveCase()">✓ حفظ</button>
+      <button class="btn" onclick="closeModal()">إلغاء</button>
+      <button class="btn danger" id="del-btn" onclick="deleteCase()" style="margin-right:auto">🗑 حذف</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const IMPORTED = [{"id":19,"subject":"19 ما أبلغت به رئاسة المجلس بخصوص تعدي امين ثابت وحدة كفر شاهين","referral_date":"2026-01-01","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"2026-04-08","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":20,"subject":"20 شكوى ممرضة هدي تضرر من تذاكر مستشفى زفتى","referral_date":"2026-01-01","entity":"وزارة الصحة والسكان","disposition":"حفظ لعدم الأهمية","disposition_date":"2026-04-19","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":21,"subject":"21 شكوى محمد صوابي عتريس","referral_date":"2026-01-01","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"2026-04-19","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":22,"subject":"22 متغير المكاني رقم 607580 بناحية الشبرا ملس","referral_date":"2026-01-01","entity":"وزارة التنمية المحلية","disposition":"تحقيق","disposition_date":"2026-02-23","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":23,"subject":"23 بلاغ ضد مسعد فتحي لزرع أعمدة سنبو الكبرى","referral_date":"2026-01-01","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":24,"subject":"24 شكوى احمد ابو الفتوح معلم ضد المدرسة عبير","referral_date":"2026-01-01","entity":"وزارة التربية والتعليم والتعليم الفني","disposition":"حفظ إداري","disposition_date":"2026-02-23","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":25,"subject":"25 اعمال صيرافية شبراملس عوائد عن عام 2024،","referral_date":"2026-01-01","entity":"الضرائب العقارية","disposition":"حفظ إداري","disposition_date":"2026-03-28","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":26,"subject":"26 افراد 302 رصف الطرق","referral_date":"2026-01-01","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"2026-02-23","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":27,"subject":"افراد 771 لسنة 2025 الزراعة انقطاع العامل سعد عن العمل دون انهاء خدمته","referral_date":"2026-01-01","entity":"وزارة الزراعة واستصلاح الأراضي","disposition":"تحقيق","disposition_date":"","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":141,"subject":"141 شكوى فقد ملف التصالح الخاص بالمواطن عزت الخولي","referral_date":"2026-02-01","entity":"داخلي","disposition":"حفظ إداري","disposition_date":"2026-03-31","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":138,"subject":"افراد شكوى خديجة ضد مدير مدرسة 748","referral_date":"2026-02-01","entity":"وزارة التربية والتعليم والتعليم الفني","disposition":"حفظ إداري","disposition_date":"2026-02-23","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":151,"subject":"151 ش عبد العظيم عمر عبد العظيم فتوح الوحدة المحلية بقرية سنبو الكبرى، المواطن عبد النبي سالم خميس","referral_date":"2026-02-01","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"2026-04-19","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":152,"subject":"152 شكوى حسن طه حسن لعدم الحاق نجلته بالمدرسة القريبة","referral_date":"2026-02-01","entity":"وزارة التربية والتعليم والتعليم الفني","disposition":"حفظ إداري","disposition_date":"2026-04-03","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":153,"subject":"153 شكوى سعد طه سعد ضد موجه المكتبات","referral_date":"2026-02-01","entity":"وزارة التربية والتعليم والتعليم الفني","disposition":"حفظ إداري","disposition_date":"2026-03-01","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":142,"subject":"142 افراد تامر عبدالحميد","referral_date":"2026-02-01","entity":"وزارة الموارد المائية والري","disposition":"حفظ إداري","disposition_date":"2026-04-27","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":225,"subject":"225 بلاغ مديرية الصحة بشأن ملاحظة الجهاز المركزي علي منظومة النظافة بمستشفى زفتى العام","referral_date":"2026-04-01","entity":"وزارة الصحة والسكان","disposition":"حفظ لعدم الأهمية","disposition_date":"2026-05-18","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":226,"subject":"226 افراد انقطاع احمد فريد توفيق الهلباوي","referral_date":"2026-03-01","entity":"وزارة الصحة والسكان","disposition":"تحقيق","disposition_date":"","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":227,"subject":"شكوى أسماء حسن الجوهري ضد المختصين بالتأمينات","referral_date":"2026-03-01","entity":"وزارة المالية","disposition":"حفظ لعدم الأهمية","disposition_date":"2026-05-18","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":241,"subject":"241 قسائم التحصيل الممزقة والتأخر في التحصيل مستشفى زفتى","referral_date":"2026-04-01","entity":"وزارة الصحة والسكان","disposition":"حفظ لعدم الأهمية","disposition_date":"2026-05-18","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":269,"subject":"269 بلاغ المتغيرات المكانية رقم 202177 بندر زفتى","referral_date":"2026-03-01","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"2026-04-27","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":287,"subject":"بلاغ الصحة بشأن مستحقات النفايات","referral_date":"2026-04-01","entity":"وزارة الصحة والسكان","disposition":"حفظ لعدم الأهمية","disposition_date":"2026-04-27","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":288,"subject":"بلاغ الطب البيطري التعدي علي مديرة المدرسة","referral_date":"2026-04-01","entity":"وزارة الزراعة واستصلاح الأراضي","disposition":"اختصاص","disposition_date":"2026-04-27","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":289,"subject":"شكوى أحمد السعيد محمد سويلم ضد المختصين بوحدة سنباط","referral_date":"2026-04-01","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"2026-04-27","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":400,"subject":"متغيرات","referral_date":"2026-05-05","entity":"وزارة التنمية المحلية","disposition":"حفظ إداري","disposition_date":"2026-05-18","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":341,"subject":"بلاغ ضرائب","referral_date":"2026-05-03","entity":"وزارة المالية","disposition":"حفظ إداري","disposition_date":"2026-05-18","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]},
+{"id":440,"subject":"بلاغ زراعة","referral_date":"2026-05-03","entity":"وزارة الزراعة واستصلاح الأراضي","disposition":"حفظ إداري","disposition_date":"2026-06-01","memo_link":"","memo_doc_link":"","session_date":"","requirees":[]}];
+
+const STORAGE_KEY = 'zafta_cases_2026_v2';
+const PAGE_SIZE = 15;
+let page = 1;
+let editingId = null;
+let formRequirees = [];
+
+function loadCases(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try { return JSON.parse(raw); } catch(e){ return IMPORTED; }
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(IMPORTED));
+  return IMPORTED;
+}
+function saveCases(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function getCases(){ return loadCases(); }
+
+function daysBetween(d1, d2){
+  if(!d1) return null;
+  const a = new Date(d1), b = d2 ? new Date(d2) : new Date();
+  return Math.round((b - a) / 86400000);
+}
+function badgeClass(d){
+  if(d === 'تحقيق') return 'b-tahqiq';
+  if(d === 'عرض') return 'b-ard';
+  if(d === 'حفظ لعدم الأهمية') return 'b-hafz2';
+  if(d === 'اختصاص') return 'b-ikhtisas';
+  return 'b-hafz';
+}
+function fmtDate(s){
+  if(!s) return '—';
+  const [y,m,dd] = s.split('-');
+  return `${dd}/${m}/${y}`;
+}
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getFiltered(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const fe = document.getElementById('flt-entity').value;
+  const fd = document.getElementById('flt-disp').value;
+  const srt = document.getElementById('sort').value;
+  let data = getCases();
+  if(q) data = data.filter(c => c.id.toString().includes(q) || (c.subject||'').toLowerCase().includes(q));
+  if(fe) data = data.filter(c => c.entity === fe);
+  if(fd) data = data.filter(c => c.disposition === fd);
+  data = data.slice();
+  if(srt === 'id-asc') data.sort((a,b)=>a.id-b.id);
+  else if(srt === 'id-desc') data.sort((a,b)=>b.id-a.id);
+  else if(srt === 'date-desc') data.sort((a,b)=>(b.referral_date||'').localeCompare(a.referral_date||''));
+  else if(srt === 'date-asc') data.sort((a,b)=>(a.referral_date||'').localeCompare(b.referral_date||''));
+  else if(srt === 'days-desc') data.sort((a,b)=>(daysBetween(b.referral_date,b.disposition_date)||0)-(daysBetween(a.referral_date,a.disposition_date)||0));
+  return data;
+}
+
+function updateStats(){
+  const all = getCases();
+  const pending = all.filter(c => c.disposition === 'تحقيق' && !c.disposition_date);
+  const ard = all.filter(c => c.disposition === 'عرض');
+  const done = all.filter(c => c.disposition_date && c.disposition !== 'عرض');
+  const avgDays = done.length ? Math.round(done.reduce((s,c)=>s+(daysBetween(c.referral_date,c.disposition_date)||0),0)/done.length) : 0;
+  const rate = all.length ? Math.round((done.length/all.length)*100) : 0;
+  document.getElementById('s-total').textContent = all.length;
+  document.getElementById('s-pending').textContent = pending.length;
+  document.getElementById('s-ard').textContent = ard.length;
+  document.getElementById('s-done').textContent = done.length;
+  document.getElementById('s-rate').textContent = rate + '%';
+  document.getElementById('s-days').textContent = avgDays;
+  document.getElementById('case-count-sub').textContent = `إجمالي ${all.length} قضية — ${pending.length} قيد التحقيق — ${ard.length} عرض — نسبة الإنجاز ${rate}%`;
+}
+
+function fillEntityFilter(){
+  const entities = [...new Set(getCases().map(c=>c.entity).filter(Boolean))].sort();
+  const sel = document.getElementById('flt-entity');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">كل الجهات</option>';
+  entities.forEach(e => {
+    const o = document.createElement('option');
+    o.value = e; o.textContent = e;
+    if(e===cur) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+function render(){
+  page = 1;
+  renderTable();
+  renderAgenda();
+  updateStats();
+  fillEntityFilter();
+}
+
+function renderTable(){
+  const filtered = getFiltered();
+  const total = filtered.length;
+  const pages = Math.ceil(total / PAGE_SIZE) || 1;
+  if(page > pages) page = pages;
+  const slice = filtered.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+
+  const tbody = document.getElementById('tbl-body');
+  if(!slice.length){
+    tbody.innerHTML = '<tr><td colspan="8" class="no-data">لا توجد قضايا مطابقة</td></tr>';
+  } else {
+    tbody.innerHTML = slice.map(c => {
+      const days = daysBetween(c.referral_date, c.disposition_date||null);
+      const daysStr = days !== null ? `<span class="day-badge">${days} يوم</span>` : '—';
+      const memoIcon = c.memo_doc_link
+        ? `<a href="${esc(c.memo_doc_link)}" class="icon-link" target="_blank" rel="noopener" title="فتح ملف المذكرة">📄 المذكرة</a>`
+        : `<span class="icon-link muted">— لا يوجد</span>`;
+      const reqCount = (c.requirees||[]).length;
+      return `<tr>
+        <td style="font-weight:600">${c.id}</td>
+        <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(c.subject)}">${esc(c.subject)}</td>
+        <td><span class="entity-tag">${esc(c.entity)||'—'}</span></td>
+        <td>${fmtDate(c.referral_date)}</td>
+        <td><span class="badge ${badgeClass(c.disposition)}">${esc(c.disposition)}</span></td>
+        <td>${daysStr}</td>
+        <td>${memoIcon}${reqCount?`<br><span class="day-badge" title="عدد المطلوبين" style="margin-top:4px;display:inline-block">${reqCount} مطلوب</span>`:''}</td>
+        <td><button class="btn sm" onclick="openEdit(${c.id})">✎</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  const pagesEl = document.getElementById('pages');
+  if(pages <= 1){ pagesEl.innerHTML = `<span>${total} نتيجة</span>`; return; }
+  pagesEl.innerHTML = `
+    <button class="btn sm" onclick="goPage(${page-1})" ${page===1?'disabled':''}>›</button>
+    <span>صفحة ${page} من ${pages} &nbsp;(${total} نتيجة)</span>
+    <button class="btn sm" onclick="goPage(${page+1})" ${page===pages?'disabled':''}>‹</button>
+  `;
+}
+
+function attLabel(s){
+  if(s==='حضر') return '<span class="att-state att-yes">حضر</span>';
+  if(s==='لم يحضر') return '<span class="att-state att-no">لم يحضر</span>';
+  return '<span class="att-state att-pending">لم يُخطر</span>';
+}
+
+function renderAgenda(){
+  const today = new Date().toISOString().split('T')[0];
+  const all = getCases().filter(c => (c.disposition === 'تحقيق' || c.disposition === 'عرض') && c.session_date && c.session_date >= today);
+  all.sort((a,b)=>a.session_date.localeCompare(b.session_date));
+  const cont = document.getElementById('agenda-cont');
+  if(!all.length){
+    cont.innerHTML = '<div class="no-data" style="background:var(--card);border:1px solid var(--border-soft);border-radius:12px">لا توجد جلسات قادمة مجدولة لقضايا قيد التحقيق</div>';
+    return;
+  }
+  const weekFromNow = new Date(Date.now() + 7*86400000).toISOString().split('T')[0];
+  cont.innerHTML = all.map(c => {
+    const urgent = c.session_date <= weekFromNow;
+    const reqs = c.requirees || [];
+    const reqHtml = reqs.length
+      ? `<div class="req-list-view">${reqs.map(r => `
+          <div class="req-item-view">
+            <span><strong>${esc(r.name)||'—'}</strong>${r.role?' — '+esc(r.role):''}${r.phone?' · '+esc(r.phone):''}</span>
+            ${attLabel(r.attendance)}
+          </div>`).join('')}</div>`
+      : '<div style="font-size:12px;color:var(--text-faint)">لا يوجد مطلوبون مسجلون لهذه القضية</div>';
+    return `<div class="agenda-card ${urgent?'urgent':''}">
+      <div class="agenda-head">
+        <span class="id">قضية #${c.id}</span>
+        <span class="date">📅 ${fmtDate(c.session_date)}${urgent?' — قريباً':''}</span>
+      </div>
+      <div class="agenda-subj">${esc(c.subject)}</div>
+      ${reqHtml}
+    </div>`;
+  }).join('');
+}
+
+function goPage(p){ page = p; renderTable(); }
+
+function renderRequireesForm(){
+  const cont = document.getElementById('req-form-list');
+  if(!formRequirees.length){
+    cont.innerHTML = '<div class="empty-req">لا يوجد مطلوبون مضافون بعد</div>';
+    return;
+  }
+  cont.innerHTML = formRequirees.map((r,i) => `
+    <div class="req-row">
+      <input placeholder="الاسم" value="${esc(r.name)}" oninput="formRequirees[${i}].name=this.value">
+      <input placeholder="الصفة/الوظيفة" value="${esc(r.role)}" oninput="formRequirees[${i}].role=this.value">
+      <input placeholder="الهاتف" value="${esc(r.phone)}" oninput="formRequirees[${i}].phone=this.value">
+      <select onchange="formRequirees[${i}].attendance=this.value">
+        <option value="لم يُخطر" ${r.attendance==='لم يُخطر'||!r.attendance?'selected':''}>لم يُخطر</option>
+        <option value="حضر" ${r.attendance==='حضر'?'selected':''}>حضر</option>
+        <option value="لم يحضر" ${r.attendance==='لم يحضر'?'selected':''}>لم يحضر</option>
+      </select>
+      <span class="rm" onclick="removeRequiree(${i})" title="حذف">✕</span>
+    </div>`).join('');
+}
+function addRequiree(){
+  formRequirees.push({name:'',role:'',phone:'',attendance:'لم يُخطر'});
+  renderRequireesForm();
+}
+function removeRequiree(i){
+  formRequirees.splice(i,1);
+  renderRequireesForm();
+}
+
+function openAdd(){
+  editingId = null;
+  formRequirees = [];
+  document.getElementById('modal-title').textContent = 'إضافة قضية جديدة';
+  document.getElementById('f-id').value = '';
+  document.getElementById('f-subject').value = '';
+  document.getElementById('f-entity').value = '';
+  document.getElementById('f-ref-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-disp').value = 'تحقيق';
+  document.getElementById('f-disp-date').value = '';
+  document.getElementById('f-memo').value = '';
+  document.getElementById('f-memo-doc').value = '';
+  document.getElementById('f-session-date').value = '';
+  document.getElementById('del-btn').style.display = 'none';
+  renderRequireesForm();
+  document.getElementById('modal').classList.add('show');
+}
+
+function openEdit(id){
+  const c = getCases().find(x=>x.id===id);
+  if(!c) return;
+  editingId = id;
+  formRequirees = JSON.parse(JSON.stringify(c.requirees||[]));
+  document.getElementById('modal-title').textContent = 'تعديل القضية #' + id;
+  document.getElementById('f-id').value = c.id;
+  document.getElementById('f-subject').value = c.subject;
+  document.getElementById('f-entity').value = c.entity;
+  document.getElementById('f-ref-date').value = c.referral_date;
+  document.getElementById('f-disp').value = c.disposition;
+  document.getElementById('f-disp-date').value = c.disposition_date;
+  document.getElementById('f-memo').value = c.memo_link||'';
+  document.getElementById('f-memo-doc').value = c.memo_doc_link||'';
+  document.getElementById('f-session-date').value = c.session_date||'';
+  document.getElementById('del-btn').style.display = 'inline-flex';
+  renderRequireesForm();
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+function saveCase(){
+  const id = parseInt(document.getElementById('f-id').value);
+  if(!id || isNaN(id)){ alert('رقم القضية مطلوب'); return; }
+  const entry = {
+    id,
+    subject: document.getElementById('f-subject').value.trim(),
+    entity: document.getElementById('f-entity').value.trim(),
+    referral_date: document.getElementById('f-ref-date').value,
+    disposition: document.getElementById('f-disp').value,
+    disposition_date: document.getElementById('f-disp-date').value,
+    memo_link: document.getElementById('f-memo').value.trim(),
+    memo_doc_link: document.getElementById('f-memo-doc').value.trim(),
+    session_date: document.getElementById('f-session-date').value,
+    requirees: formRequirees.filter(r=>r.name && r.name.trim())
+  };
+  let data = getCases();
+  if(editingId !== null){
+    data = data.map(c => c.id === editingId ? entry : c);
+  } else {
+    if(data.find(c=>c.id===id)){ alert('رقم القضية موجود بالفعل'); return; }
+    data.push(entry);
+  }
+  saveCases(data);
+  closeModal();
+  render();
+}
+
+function deleteCase(){
+  if(!confirm('هل تريد حذف هذه القضية؟')) return;
+  let data = getCases().filter(c => c.id !== editingId);
+  saveCases(data);
+  closeModal();
+  render();
+}
+
+function exportJson(){
+  const data = getCases();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'نسخة_احتياطية_قضايا_زفتى_' + new Date().toISOString().split('T')[0] + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+render();
+</script>
+</body>
+</html>
